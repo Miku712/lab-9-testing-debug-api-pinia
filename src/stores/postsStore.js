@@ -7,7 +7,8 @@ export const usePostsStore = defineStore('posts', {
     error: null,
     page: 1,
     limit: 5,
-    query: ''
+    query: '',
+    requestId: 0 
   }),
 
   getters: {
@@ -20,6 +21,8 @@ export const usePostsStore = defineStore('posts', {
 
   actions: {
     async fetchItems() {
+      const currentRequest = ++this.requestId  
+
       this.isLoading = true
       this.error = null
 
@@ -29,6 +32,9 @@ export const usePostsStore = defineStore('posts', {
         )
 
         const data = await res.json()
+
+        if (currentRequest !== this.requestId) return
+
         this.items = data
       } catch (e) {
         this.error = 'Помилка завантаження'
